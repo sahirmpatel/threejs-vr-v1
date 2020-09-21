@@ -27,7 +27,6 @@ function init() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    document.body.appendChild(VRButton.createButton(renderer));
     renderer.xr.enabled = true;
     camera.position.set(0, 5, 10);
 
@@ -64,6 +63,7 @@ function init() {
     plane.position.set(10, 5, 0)
     scene.add(plane)
 
+    document.body.appendChild(VRButton.createButton(renderer));
 
 }
 
@@ -73,6 +73,11 @@ function render() {
     renderer.render(scene, camera);
 
     requestAnimationFrame(render);
+}
+function animate() {
+
+    renderer.setAnimationLoop(render);
+
 }
 requestAnimationFrame(render);
 
