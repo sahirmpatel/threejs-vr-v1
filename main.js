@@ -3,44 +3,44 @@ import { OrbitControls } from './OrbitControls.js';
 import { GLTFLoader } from "./GLTFLoader.js"
 import { VRButton } from './VRButton.js';
 
-var scene, renderer, fov, aspect, near, far, camera, light, loader, controls, geometry, texture, material, plane
-function init() {
 
+let scene, renderer, fov, aspect, near, far, camera, light, loader, controls, geometry, texture, material, plane
+function init() {
+    //scene set up
     scene = new THREE.Scene();
 
-
-    renderer = new THREE.WebGLRenderer();
-
+    //camera set up
     fov = 100;
-    aspect = window.innerWidth / window.innerHeight;  // the canvas default
+    aspect = window.innerWidth / window.innerHeight;
     near = 0.1;
     far = 5000;
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    camera.position.set(0, 10, 50);
 
-    // camera.position.set(0, 10, 200)
 
-    light = new THREE.AmbientLight(0x404040, 10); // soft white light
+    //light set up bro
+    light = new THREE.AmbientLight(0x404040, 10);
     scene.add(light);
-    loader = new GLTFLoader();
-    controls = new OrbitControls(camera, renderer.domElement);
 
 
+    //renderer set up
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    renderer.xr.enabled = true;
-    camera.position.set(0, 5, 10);
 
+    //vr button
+    document.body.appendChild(VRButton.createButton(renderer));
+    renderer.xr.enabled = true;
     // Load a glTF resource
+    loader = new GLTFLoader();
     loader.load(
         // resource URL
         './test1.glb',
         // called when the resource is loaded
         function (gltf) {
             gltf.scene.position.set(0, 0, 0)
+            gltf.scene.scale.set(5, 5, 5)
             scene.add(gltf.scene);
-
-
-
         },
         // called while loading is progressing
         function (xhr) {
@@ -56,31 +56,39 @@ function init() {
         }
     );
 
-    geometry = new THREE.PlaneGeometry(10, 10, 10);
+    //Add BDC photo
+    geometry = new THREE.PlaneGeometry(20, 20, 20);
     texture = new THREE.TextureLoader().load('./image.png')
     material = new THREE.MeshBasicMaterial({ map: texture });
     plane = new THREE.Mesh(geometry, material);
-    plane.position.set(10, 5, 0)
+    plane.position.set(10, 10, 0)
     scene.add(plane)
 
-    document.body.appendChild(VRButton.createButton(renderer));
+    //orbit controls
+    controls = new OrbitControls(camera, renderer.domElement);
+
+
 
 }
 
 
-function render() {
+
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight)
+}
+window.addEventListener('resize', onWindowResize, false)
+init()
+var animate = function () {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+};
+animate()
+
+renderer.setAnimationLoop(function () {
 
     renderer.render(scene, camera);
 
-    requestAnimationFrame(render);
-}
-function animate() {
-
-    renderer.setAnimationLoop(render);
-
-}
-requestAnimationFrame(render);
-
-init()
-render()
-animate()
+});
