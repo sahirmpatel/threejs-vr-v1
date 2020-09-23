@@ -83,7 +83,7 @@ function init() {
     texture = new THREE.TextureLoader().load('./image.png')
     material = new THREE.MeshBasicMaterial({ map: texture });
     plane = new THREE.Mesh(geometry, material);
-    plane.position.set(10, 10, 0)
+    plane.position.set(10, 10, -50)
     scene.add(plane)
 
     //orbit controls
