@@ -4,6 +4,28 @@ import { GLTFLoader } from "./GLTFLoader.js"
 import { VRButton } from './VRButton.js';
 
 
+
+//console.log(navigator.xr);
+//checkForXRSupport();
+function checkForXRSupport() {
+    // Check to see if there is an XR device available that supports immersive VR
+    // presentation (for example: displaying in a headset). If the device has that
+    // capability the page will want to add an "Enter VR" button to the page (similar to
+    // a "Fullscreen" button) that starts the display of immersive VR content.
+    navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+        if (supported) {
+            var enterXrBtn = document.createElement("button");
+            enterXrBtn.innerHTML = "Enter VR";
+            enterXrBtn.addEventListener("click", beginXRSession);
+            document.body.appendChild(enterXrBtn);
+        } else {
+            console.log("Session not supported: ");
+        }
+    });
+}
+
+
+
 let scene, renderer, fov, aspect, near, far, camera, light, loader, controls, geometry, texture, material, plane
 function init() {
     //scene set up
